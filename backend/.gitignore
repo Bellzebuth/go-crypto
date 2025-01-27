@@ -1,0 +1,17 @@
+# Binary files
+*.exe
+*.dll
+*.so
+*.dylib
+*.out
+
+# Dependency files
+vendor/
+
+# Build cache
+*.test
+*.exe~
+
+# Go workspace files
+*.log
+*.lock
