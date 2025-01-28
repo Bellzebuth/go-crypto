@@ -12,8 +12,7 @@ import (
 func resetDB() {
 	log.Println("Resetting the database...")
 
-	// Appel de la fonction pour réinitialiser la base
-	err := db.ResetDB() // Vous devez implémenter cette fonction dans votre package db
+	err := db.ResetDB()
 	if err != nil {
 		log.Fatalf("Failed to reset the database: %v", err)
 	}
@@ -34,27 +33,24 @@ func startServer() {
 
 	go func() {
 		log.Println("Starting price update...")
-		err := core.UpdateCryptoPrices() // Exécution initiale
+		err := core.UpdateCryptoPrices() // first execution
 		if err != nil {
 			log.Printf("Error updating crypto prices: %v", err)
 		} else {
 			log.Println("Crypto prices updated successfully.")
 		}
 
-		// Réexécution toutes les 10 minutes
+		// execute every 10 minutes
 		ticker := time.NewTicker(10 * time.Minute)
 		defer ticker.Stop()
 
-		for {
-			select {
-			case <-ticker.C:
-				log.Println("Update cache prices ...")
-				err := core.UpdateCryptoPrices()
-				if err != nil {
-					log.Printf("Error updating crypto prices: %v", err)
-				} else {
-					log.Println("Crypto prices updated successfully.")
-				}
+		for range ticker.C {
+			log.Println("Update cache prices ...")
+			err := core.UpdateCryptoPrices()
+			if err != nil {
+				log.Printf("Error updating crypto prices: %v", err)
+			} else {
+				log.Println("Crypto prices updated successfully.")
 			}
 		}
 	}()
