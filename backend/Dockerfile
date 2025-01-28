@@ -15,7 +15,7 @@ COPY . .
 RUN go build -o main ./cmd/main.go
 
 # Image légère pour exécuter l'application
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 
 # Définir le dossier de travail dans le conteneur
 WORKDIR /app
@@ -28,4 +28,5 @@ COPY schema.sql .
 EXPOSE 8080
 
 # Commande pour exécuter l'application
-CMD ["./main"]
+CMD ["./main", "server"]
+

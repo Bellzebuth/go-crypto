@@ -2,47 +2,43 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
+	"os"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 var DB *sql.DB
 
-func InitDB() {
-	var err error
-	DB, err = sql.Open("sqlite3", "./crypto.db")
+func InitDB() (*sql.DB, error) {
+	db, err := sql.Open("sqlite3", "crypto.db")
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		return nil, fmt.Errorf("failed to connect to database: %v", err)
 	}
 
-	createTables()
+	log.Println("No tables found. Initializing database from schema.sql...")
+	err = executeSQLFromFile(db, "schema.sql")
+	if err != nil {
+		return nil, fmt.Errorf("failed to initialize database: %v", err)
+	}
+	log.Println("Database initialized successfully.")
+
+	return db, nil
 }
 
-func createTables() {
-	portfolioTable := `CREATE TABLE IF NOT EXISTS portfolios (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		user_id INTEGER NOT NULL,
-		name TEXT NOT NULL,
-		amount REAL NOT NULL,
-		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-	);`
-
-	simulationTable := `CREATE TABLE IF NOT EXISTS simulations (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		user_id INTEGER NOT NULL,
-		strategy TEXT NOT NULL,
-		result REAL NOT NULL,
-		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-	);`
-
-	if _, err := DB.Exec(portfolioTable); err != nil {
-		log.Fatalf("Failed to create portfolios table: %v", err)
+func executeSQLFromFile(db *sql.DB, filename string) error {
+	script, err := os.ReadFile(filename)
+	if err != nil {
+		return fmt.Errorf("failed to read file %s: %v", filename, err)
 	}
 
-	if _, err := DB.Exec(simulationTable); err != nil {
-		log.Fatalf("Failed to create simulations table: %v", err)
+	_, err = db.Exec(string(script))
+	if err != nil {
+		return fmt.Errorf("failed to execute script: %v", err)
 	}
+
+	return nil
 }
 
 func CloseDB() {
