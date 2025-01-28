@@ -61,13 +61,22 @@ func Add(c *gin.Context) {
 }
 
 func ListSum(c *gin.Context) {
-	rows, err := db.DB.Query(`SELECT a.key_name, c.name, SUM(a.amount), AVG(purchased_price), cp.price
-	FROM assets AS a 
-	LEFT JOIN cryptos AS c 
-	ON a.key_name = c.key_name
-	LEFT JOIN cache_prices as cp
-	ON a.key_name= cp.key_name
-	GROUP BY a.key_name`)
+	rows, err := db.DB.Query(`SELECT 
+    a.key_name, 
+    c.name, 
+    SUM(a.amount) AS total_amount, 
+    SUM(a.purchased_price * a.amount) / SUM(a.amount) AS avg_purchased_price, 
+    cp.price
+	FROM 
+    	assets AS a 
+	LEFT JOIN 
+    	cryptos AS c 
+    	ON a.key_name = c.key_name
+	LEFT JOIN 
+    	cache_prices AS cp
+    	ON a.key_name = cp.key_name
+	GROUP BY 
+    	a.key_name, c.name, cp.price;`)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

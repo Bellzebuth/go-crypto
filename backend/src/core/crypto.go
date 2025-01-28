@@ -29,7 +29,7 @@ func Search(c *gin.Context) {
 	query := strings.ToLower(c.Query("query"))
 
 	cryptos := []Crypto{}
-	rows, err := db.DB.Query(`SELECT * FROM cryptos where name LIKE ? COLLATE NOCASE`, "%"+query+"%")
+	rows, err := db.DB.Query(`SELECT * FROM cryptos where name LIKE ? COLLATE NOCASE LIMIT 5`, "%"+query+"%")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
