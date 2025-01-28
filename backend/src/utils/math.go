@@ -22,20 +22,13 @@ func CalculateGain(initialInvestment float64, purchasePrice float64, actualPrice
 		return 0, 0, 0, errors.New("division by zero")
 	}
 
-	investment := float64(initialInvestment * 1_000_000)
-
-	quantity := investment / purchasePrice
+	quantity := initialInvestment / purchasePrice
 	currentValue := quantity * float64(actualPrice)
 
-	gain := currentValue - investment
-	percentageGain := (gain * 100) / investment
+	gain := currentValue - initialInvestment
+	percentageGain := (gain * 100) / initialInvestment
 
-	formattedGain, err := FormatPrecision(gain, 6, 2)
-	if err != nil {
-		return 0, 0, 0, err
-	}
+	totalValue := initialInvestment + gain
 
-	totalValue := float64(investment) + formattedGain
-
-	return totalValue, formattedGain, int(percentageGain), nil
+	return totalValue, gain, int(percentageGain), nil
 }
