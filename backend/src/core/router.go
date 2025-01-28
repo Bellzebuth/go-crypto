@@ -20,7 +20,7 @@ func SetupRouter() *gin.Engine {
 	r.GET("/cryptos/list", Search)
 	r.GET("/portfolio/list", List)
 	r.GET("/portfolio/listsum", ListSum)
-	r.GET("/portfolio/total", GetTotal)
+	r.GET("/portfolio/total", GetTotals)
 
 	r.DELETE("/portfolio/:id", Delete)
 

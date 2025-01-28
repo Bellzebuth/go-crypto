@@ -150,7 +150,7 @@ func Delete(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Crypto deleted"})
 }
 
-func GetTotal(c *gin.Context) {
+func GetTotals(c *gin.Context) {
 	rows, err := db.DB.Query(`SELECT cp.key_name, a.amount, a.purchased_price, cp.price 
 		FROM assets AS a 
 		LEFT JOIN cache_prices AS cp 
@@ -162,12 +162,15 @@ func GetTotal(c *gin.Context) {
 	defer rows.Close()
 
 	totalValue := 0.0
+	totalInvested := 0.0
 	for rows.Next() {
 		var asset Asset
 		if err := rows.Scan(&asset.KeyName, &asset.Amount, &asset.PurchasedPrice, &asset.ActualPrice); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
+
+		totalInvested += asset.Amount
 
 		value, _, _, err := utils.CalculateGain(asset.Amount, asset.PurchasedPrice, asset.ActualPrice)
 		if err != nil {
@@ -178,5 +181,5 @@ func GetTotal(c *gin.Context) {
 		totalValue += value
 	}
 
-	c.JSON(http.StatusOK, fmt.Sprintf("%.2f", totalValue))
+	c.JSON(http.StatusOK, gin.H{"totalInvested": totalInvested, "totalValue": fmt.Sprintf("%.2f", totalValue)})
 }
