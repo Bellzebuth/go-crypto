@@ -2,7 +2,10 @@ import React, { useEffect, useState, useCallback } from "react";
 import clsx from "clsx";
 import api from "../services/api";
 import { Trash2 } from "lucide-react";
-import { formatToPercentage, formatToTwoDecimalsPrice } from "../lib/format";
+import {
+  formatToPercentage,
+  formatToTwoDecimalsPrice,
+} from "../services/format";
 
 type Crypto = {
   id: number;

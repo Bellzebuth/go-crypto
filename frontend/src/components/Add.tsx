@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import api from "../services/api";
-import Autocomplete from "./autocomplete";
+import Autocomplete from "./Autocomplete";
 
 export type Crypto = {
   keyName: string;

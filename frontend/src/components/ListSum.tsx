@@ -4,8 +4,11 @@ import api from "../services/api";
 import AddCrypto from "./Add";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import ListDetails from "./ListDetails";
-import { formatToPercentage, formatToTwoDecimalsPrice } from "../lib/format";
-import Totals from "./Total";
+import {
+  formatToPercentage,
+  formatToTwoDecimalsPrice,
+} from "../services/format";
+import Totals from "./Totals";
 
 type CryptoSum = {
   keyName: string;

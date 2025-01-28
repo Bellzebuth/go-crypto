@@ -61,7 +61,7 @@ func TestCalculateGain(t *testing.T) {
 		newPrice               int
 		expectedTotal          float64
 		expectedGain           float64
-		expectedPercentageGain int
+		expectedPercentageGain float64
 		expectedErr            error
 	}{
 		// Cas basiques
