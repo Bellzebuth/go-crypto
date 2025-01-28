@@ -42,10 +42,8 @@ const AddCrypto: React.FC<AddCryptoProps> = ({ updateList }) => {
   };
 
   return (
-    <div className="bg-white rounded-md border border-gray-300 mb-2">
-      <div className="bg-[#0b004b] text-white font-bold rounded-t-md px-1">
-        Add crypto to your wallet
-      </div>
+    <div className="mb-2 border-b border-zinc-800">
+      <div className="text-lg font-bold">New asset</div>
       <form onSubmit={handleSubmit} className="flex justify-between p-1">
         <Autocomplete query={query} setQuery={setQuery} setCrypto={setCrypto} />
         <input
@@ -56,8 +54,9 @@ const AddCrypto: React.FC<AddCryptoProps> = ({ updateList }) => {
           required
         />
         <button
-          className="bg-[#0b004b] text-white rounded-md my-2 p-1"
+          className="bg-[#0b004b] text-white rounded-md my-2 p-1 disabled:bg-gray-300"
           type="submit"
+          disabled={crypto.keyName === ""}
         >
           Add Crypto
         </button>

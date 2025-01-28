@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../services/api";
 import { Crypto } from "./Add";
 
 type AutocompleteProps = {
@@ -25,18 +25,12 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
     }
 
     setIsLoading(true);
-    try {
-      const response = await axios.get<Crypto[]>(
-        `http://localhost:8080/cryptos/list?query=${encodeURIComponent(
-          searchQuery
-        )}`
-      );
-      setResults(response.data);
-    } catch (error) {
-      console.error("Error fetching cryptos:", error);
-    } finally {
-      setIsLoading(false);
-    }
+
+    api
+      .get<Crypto[]>(`/cryptos/list?query=${encodeURIComponent(searchQuery)}`)
+      .then((response) => setResults(response.data))
+      .catch((error) => console.error("Error fetching cryptos:", error))
+      .finally(() => setIsLoading(false));
   };
 
   return (
