@@ -56,7 +56,7 @@ func TestFormatPrecision(t *testing.T) {
 
 func TestCalculateGain(t *testing.T) {
 	tests := []struct {
-		initialInvestment      int
+		initialInvestment      float64
 		PurchasedPrice         float64
 		newPrice               int
 		expectedTotal          float64

@@ -7,7 +7,6 @@ import (
 )
 
 type CachePrice struct {
-	Id         int
 	KeyName    string
 	Price      int
 	LastUpdate time.Time
@@ -15,9 +14,9 @@ type CachePrice struct {
 
 func GetCachePrice(keyName string) (CachePrice, error) {
 	var cachePrice CachePrice
-	query := `SELECT id, key_name, price, last_update FROM cache_prices WHERE key_name = ?`
+	query := `SELECT key_name, price, last_update FROM cache_prices WHERE key_name = ?`
 
-	err := db.DB.QueryRow(query, keyName).Scan(&cachePrice.Id, &cachePrice.KeyName, &cachePrice.Price, &cachePrice.LastUpdate)
+	err := db.DB.QueryRow(query, keyName).Scan(&cachePrice.KeyName, &cachePrice.Price, &cachePrice.LastUpdate)
 
 	return cachePrice, err
 }

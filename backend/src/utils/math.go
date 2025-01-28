@@ -17,7 +17,7 @@ func FormatPrecision(val float64, precision, digits int) (float64, error) {
 	return strconv.ParseFloat(stringValWithDigits, 64)
 }
 
-func CalculateGain(initialInvestment int, purchasePrice float64, actualPrice int) (float64, float64, int, error) {
+func CalculateGain(initialInvestment float64, purchasePrice float64, actualPrice int) (float64, float64, int, error) {
 	if purchasePrice == 0 {
 		return 0, 0, 0, errors.New("division by zero")
 	}

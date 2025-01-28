@@ -14,7 +14,7 @@ type Asset struct {
 	Id             int       `json:"id"`
 	KeyName        string    `json:"keyName"`
 	Crypto         Crypto    `json:"crypto"`
-	Amount         int       `json:"amount"`
+	Amount         float64   `json:"amount"`
 	PurchasedPrice float64   `json:"purchasedPrice"`
 	CreatedAt      time.Time `json:"createdAt"`
 	Gain           float64   `json:"gain"`
@@ -49,7 +49,7 @@ func Add(c *gin.Context) {
 	}
 
 	query := `INSERT INTO assets (key_name, amount, purchased_price) VALUES (?, ?, ?)`
-	_, err = db.DB.Exec(query, asset.KeyName, asset.Amount, price.Price)
+	_, err = db.DB.Exec(query, asset.KeyName, utils.ConvertToMicroUnits(asset.Amount), price.Price)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -152,20 +152,13 @@ func GetTotal(c *gin.Context) {
 
 	totalValue := 0.0
 	for rows.Next() {
-		asset := struct {
-			keyName        string
-			amount         int
-			purchasedPrice float64
-			price          int
-		}{}
-
-		if err := rows.Scan(&asset.keyName, &asset.amount, &asset.purchasedPrice, &asset.price); err != nil {
+		var asset Asset
+		if err := rows.Scan(&asset.KeyName, &asset.Amount, &asset.PurchasedPrice, &asset.ActualPrice); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		value, _, _, err := utils.CalculateGain(asset.amount, asset.purchasedPrice, asset.price)
-
+		value, _, _, err := utils.CalculateGain(asset.Amount, asset.PurchasedPrice, asset.ActualPrice)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return

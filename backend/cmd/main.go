@@ -9,7 +9,19 @@ import (
 	"github.com/Bellzebuth/go-crypto/src/db"
 )
 
-func main() {
+func resetDB() {
+	log.Println("Resetting the database...")
+
+	// Appel de la fonction pour réinitialiser la base
+	err := db.ResetDB() // Vous devez implémenter cette fonction dans votre package db
+	if err != nil {
+		log.Fatalf("Failed to reset the database: %v", err)
+	}
+
+	log.Println("Database reset successfully.")
+}
+
+func startServer() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -22,14 +34,14 @@ func main() {
 
 	go func() {
 		log.Println("Starting price update...")
-		err := core.UpdateCryptoPrices() // initial execution
+		err := core.UpdateCryptoPrices() // Exécution initiale
 		if err != nil {
 			log.Printf("Error updating crypto prices: %v", err)
 		} else {
 			log.Println("Crypto prices updated successfully.")
 		}
 
-		// Re execute every 10 minutes
+		// Réexécution toutes les 10 minutes
 		ticker := time.NewTicker(10 * time.Minute)
 		defer ticker.Stop()
 
@@ -50,5 +62,22 @@ func main() {
 	log.Printf("Server is running on port %s", port)
 	if err := r.Run(":" + port); err != nil {
 		log.Fatalf("Failed to run the server: %v", err)
+	}
+}
+
+func main() {
+	if len(os.Args) < 2 {
+		log.Fatalf("Usage: go run main.go <command>\nAvailable commands: reset_db, server")
+	}
+
+	command := os.Args[1]
+
+	switch command {
+	case "reset_db":
+		resetDB()
+	case "server":
+		startServer()
+	default:
+		log.Fatalf("Unknown command: %s\nAvailable commands: reset_db, server", command)
 	}
 }
