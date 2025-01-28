@@ -3,7 +3,6 @@ import api from "../services/api";
 import Autocomplete from "./autocomplete";
 
 export type Crypto = {
-  id: number;
   keyName: string;
   name: string;
 };
@@ -13,8 +12,8 @@ interface AddCryptoProps {
 }
 
 const AddCrypto: React.FC<AddCryptoProps> = ({ updateList }) => {
+  const [query, setQuery] = useState("");
   const [crypto, setCrypto] = useState<Crypto>({
-    id: 0,
     keyName: "",
     name: "",
   });
@@ -25,13 +24,13 @@ const AddCrypto: React.FC<AddCryptoProps> = ({ updateList }) => {
     try {
       await api
         .post("/portfolio/add", {
-          cryptoId: crypto.id,
+          keyName: crypto.keyName,
           amount: parseFloat(amount),
         })
         .then(() => {
+          setQuery("");
           setAmount("");
           setCrypto({
-            id: 0,
             keyName: "",
             name: "",
           });
@@ -48,7 +47,7 @@ const AddCrypto: React.FC<AddCryptoProps> = ({ updateList }) => {
         Add crypto to your wallet
       </div>
       <form onSubmit={handleSubmit} className="flex justify-between p-1">
-        <Autocomplete setCrypto={setCrypto} />
+        <Autocomplete query={query} setQuery={setQuery} setCrypto={setCrypto} />
         <input
           placeholder="Amount (€)"
           value={amount}

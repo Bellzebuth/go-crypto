@@ -32,8 +32,8 @@ func Add(c *gin.Context) {
 		return
 	}
 
-	query := `INSERT INTO assets (key_name, amount, buying_price) VALUES (?, ?)`
-	_, err = db.DB.Exec(query, asset.KeyName, asset.Amount, price)
+	query := `INSERT INTO assets (key_name, amount, buying_price) VALUES (?, ?, ?)`
+	_, err = db.DB.Exec(query, asset.KeyName, asset.Amount, price.Price)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -76,7 +76,10 @@ func Delete(c *gin.Context) {
 }
 
 func GetTotal(c *gin.Context) {
-	rows, err := db.DB.Query("SELECT cp.key_name, a.amount, a.buying_price, cp.price FROM assets AS a LEFT JOIN cache_prices AS cp ON a.key_name=cp.key_name")
+	rows, err := db.DB.Query(`SELECT cp.key_name, a.amount, a.buying_price, cp.price 
+		FROM assets AS a 
+		LEFT JOIN cache_prices AS cp 
+		ON a.key_name=cp.key_name`)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -97,8 +100,13 @@ func GetTotal(c *gin.Context) {
 			return
 		}
 
-		gain, _ := utils.CalculateGain(asset.amount, asset.buyingPrice, asset.price)
-		totalValue += gain
+		value, _, _, err := utils.CalculateGain(asset.amount, asset.buyingPrice, asset.price)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		totalValue += value
 	}
 
 	c.JSON(http.StatusOK, totalValue)

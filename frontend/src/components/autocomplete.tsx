@@ -3,11 +3,16 @@ import axios from "axios";
 import { Crypto } from "./Add";
 
 type AutocompleteProps = {
+  query: string;
+  setQuery: (query: string) => void;
   setCrypto: (crypto: Crypto) => void;
 };
 
-const Autocomplete: React.FC<AutocompleteProps> = ({ setCrypto }) => {
-  const [query, setQuery] = useState("");
+const Autocomplete: React.FC<AutocompleteProps> = ({
+  query,
+  setQuery,
+  setCrypto,
+}) => {
   const [results, setResults] = useState<Crypto[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -49,7 +54,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ setCrypto }) => {
           <ul>
             {results.map((crypto) => (
               <li
-                key={crypto.id}
+                key={crypto.keyName}
                 className="p-2 cursor-pointer hover:bg-gray-100"
                 onClick={() => {
                   setCrypto(crypto);
