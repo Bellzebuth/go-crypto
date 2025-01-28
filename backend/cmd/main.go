@@ -21,13 +21,22 @@ func main() {
 	r := core.SetupRouter()
 
 	go func() {
-		ticker := time.NewTicker(1 * time.Hour) // execute every hour
+		log.Println("Starting price update...")
+		err := core.UpdateCryptoPrices() // initial execution
+		if err != nil {
+			log.Printf("Error updating crypto prices: %v", err)
+		} else {
+			log.Println("Crypto prices updated successfully.")
+		}
+
+		// Re execute every 10 minutes
+		ticker := time.NewTicker(10 * time.Minute)
 		defer ticker.Stop()
 
 		for {
 			select {
 			case <-ticker.C:
-				log.Println("Starting price update...")
+				log.Println("Update cache prices ...")
 				err := core.UpdateCryptoPrices()
 				if err != nil {
 					log.Printf("Error updating crypto prices: %v", err)

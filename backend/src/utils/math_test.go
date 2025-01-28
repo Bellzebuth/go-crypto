@@ -1,68 +1,32 @@
-package utils_test
+package utils
 
 import (
 	"errors"
 	"testing"
 
-	"github.com/Bellzebuth/go-crypto/src/utils"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFloatToInt(t *testing.T) {
+func TestConvertToMicroUnits(t *testing.T) {
 	tests := []struct {
-		name      string
-		input     float64
-		precision int
-		expected  int
+		input    float64
+		expected int64
 	}{
-		{
-			name:      "Simple decimal",
-			input:     0.292431,
-			precision: 6,
-			expected:  292431,
-		},
-		{
-			name:      "Rounding up",
-			input:     0.2924319,
-			precision: 6,
-			expected:  292432,
-		},
-		{
-			name:      "Rounding down",
-			input:     0.2924311,
-			precision: 6,
-			expected:  292431,
-		},
-		{
-			name:      "Different precision",
-			input:     0.292431,
-			precision: 4,
-			expected:  2924,
-		},
-		{
-			name:      "Zero input",
-			input:     0.0,
-			precision: 6,
-			expected:  0,
-		},
-		{
-			name:      "Negative input",
-			input:     -0.292431,
-			precision: 6,
-			expected:  -292431,
-		},
-		{
-			name:      "Large precision",
-			input:     0.292431,
-			precision: 8,
-			expected:  29243100,
-		},
+		{1, 1000000},
+		{2.34, 2340000},
+		{1.23456789, 1234567},
+		{0.000001, 1},
+		{123.456789, 123456789},
+		{0, 0},
+		{123456.789, 123456789000},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result := utils.FloatToInt(tt.input, tt.precision)
-			assert.Equal(t, tt.expected, result)
+	for _, test := range tests {
+		t.Run("Testing ConvertToMicroUnits", func(t *testing.T) {
+			result := ConvertToMicroUnits(test.input)
+			if result != test.expected {
+				t.Errorf("Pour l'entrée %.8f, attendu %d, obtenu %d", test.input, test.expected, result)
+			}
 		})
 	}
 }
@@ -84,7 +48,7 @@ func TestFormatPrecision(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run("Test FormatPrecision", func(t *testing.T) {
-			result, _ := utils.FormatPrecision(tt.val, tt.precision, tt.virgule)
+			result, _ := FormatPrecision(tt.val, tt.precision, tt.virgule)
 			assert.Equal(t, tt.expected, result, "Expected value does not match")
 		})
 	}
@@ -93,7 +57,7 @@ func TestFormatPrecision(t *testing.T) {
 func TestCalculateGain(t *testing.T) {
 	tests := []struct {
 		initialInvestment      int
-		buyPrice               int
+		PurchasedPrice         float64
 		newPrice               int
 		expectedTotal          float64
 		expectedGain           float64
@@ -121,7 +85,7 @@ func TestCalculateGain(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run("Test CalculateGain", func(t *testing.T) {
-			resultTotal, resultGain, resultPercentageGain, err := utils.CalculateGain(tt.initialInvestment, tt.buyPrice, tt.newPrice)
+			resultTotal, resultGain, resultPercentageGain, err := CalculateGain(tt.initialInvestment, tt.PurchasedPrice, tt.newPrice)
 			assert.Equal(t, tt.expectedTotal, resultTotal, "Expected total does not match")
 			assert.Equal(t, tt.expectedGain, resultGain, "Expected gain does not match")
 			assert.Equal(t, tt.expectedPercentageGain, resultPercentageGain, "Expected percentage gain does not match")

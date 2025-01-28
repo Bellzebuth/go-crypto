@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/Bellzebuth/go-crypto/src/db"
 	"github.com/Bellzebuth/go-crypto/src/utils"
@@ -19,6 +20,7 @@ func UpdateCryptoPrices() error {
 
 	defer resp.Body.Close()
 
+	now := time.Now()
 	if resp.StatusCode == 200 {
 		var result map[string]map[string]float64
 		err = json.NewDecoder(resp.Body).Decode(&result)
@@ -29,17 +31,16 @@ func UpdateCryptoPrices() error {
 		for keyName, currencies := range result {
 			for _, price := range currencies {
 				// update cache
-				if err != nil {
-					query := `INSERT INTO cache_prices (keyName, price) VALUES (?, ?)`
+				query := `UPDATE cache_prices SET price = ?, last_update = ? WHERE key_name = ?`
 
-					// TODO: we admit that all price are given with 6 decimals
-					_, err = db.DB.Exec(query, keyName, utils.FloatToInt(price, 6))
-					if err != nil {
-						return fmt.Errorf("failed to insert price for %s: %w", keyName, err)
-					}
+				_, err = db.DB.Exec(query, utils.ConvertToMicroUnits(price), now, keyName)
+				if err != nil {
+					return fmt.Errorf("failed to insert price for %s: %w", keyName, err)
 				}
 			}
 		}
+	} else {
+		return fmt.Errorf("failed request with status code %d", resp.StatusCode)
 	}
 
 	return nil

@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS assets (
     key_name INTEGER NOT NULL,
     amount REAL NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    buying_price INTEGER NOT NULL,
+    purchased_price INTEGER NOT NULL,
     FOREIGN KEY (key_name) REFERENCES cryptos(key_name)
 );
 

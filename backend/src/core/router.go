@@ -16,10 +16,13 @@ func SetupRouter() *gin.Engine {
 	}))
 
 	r.POST("/portfolio/add", Add)
+
 	r.GET("/cryptos/list", Search)
 	r.GET("/portfolio/list", List)
-	r.DELETE("/portfolio/:id", Delete)
+	r.GET("/portfolio/listsum", ListSum)
 	r.GET("/portfolio/total", GetTotal)
+
+	r.DELETE("/portfolio/:id", Delete)
 
 	// r.POST("/portfolio/dca", SimulateDCAHandler)
 
