@@ -76,12 +76,37 @@ git clone https://github.com/Bellzebuth/go-crypto.git
 cd go-crypto
 ```
 
-### 2. Run the application
-
-run th script:
+### 2. Install dependencies
 
 ```bash
-./start_project.sh
+cd backend
+go mod tidy
+```
+
+```bash
+cd frontend
+npm install
+```
+
+### 3. Set up the database
+
+Run the following command to initialize the SQLite database:
+
+```bash
+sqlite3 crypto.db < schema.sql
+```
+
+### 3. Run the application
+
+Run the following command to initialize the SQLite database:
+
+```bash
+go run backend/cmd/main server
+```
+
+```bash
+cd frontend
+npm run dev
 ```
 
 The application will be available at `http://localhost:5173` and the API will be available at `http://localhost:8080`
