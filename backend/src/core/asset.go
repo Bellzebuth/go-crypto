@@ -20,16 +20,18 @@ type Asset struct {
 	Gain           float64   `json:"gain"`
 	PercentageGain float64   `json:"percentageGain"`
 	ActualPrice    int       `json:"actualPrice"`
+	ActualValue    float64   `json:"actualValue"`
 }
 
 func (a Asset) ComputeGain() (Asset, error) {
-	_, gain, percentageGain, err := utils.CalculateGain(a.Amount, a.PurchasedPrice, a.ActualPrice)
+	value, gain, percentageGain, err := utils.CalculateGain(a.Amount, a.PurchasedPrice, a.ActualPrice)
 	if err != nil {
 		return a, err
 	}
 
 	a.Gain = gain
 	a.PercentageGain = percentageGain
+	a.ActualValue = value
 
 	return a, nil
 }
