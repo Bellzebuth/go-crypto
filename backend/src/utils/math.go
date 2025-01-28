@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"errors"
 	"fmt"
 	"math"
 	"strconv"
@@ -18,11 +17,14 @@ func FormatPrecision(val float64, precision, digits int) (float64, error) {
 }
 
 func CalculateGain(initialInvestment float64, purchasePrice float64, actualPrice int) (float64, float64, float64, error) {
+	var quantity float64
+
 	if purchasePrice == 0 {
-		return 0, 0, 0, errors.New("division by zero")
+		quantity = initialInvestment
+	} else {
+		quantity = initialInvestment / purchasePrice
 	}
 
-	quantity := initialInvestment / purchasePrice
 	currentValue := quantity * float64(actualPrice)
 
 	gain := currentValue - initialInvestment

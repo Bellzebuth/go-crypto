@@ -46,7 +46,7 @@ func Add(c *gin.Context) {
 
 	price, err := GetCachePrice(asset.KeyName)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "no price founded"})
 		return
 	}
 

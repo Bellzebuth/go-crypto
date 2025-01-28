@@ -20,6 +20,16 @@ func resetDB() {
 	log.Println("Database reset successfully.")
 }
 
+func updatecryptoPrices() {
+	log.Println("Starting price update...")
+	err := core.UpdateCryptoPrices()
+	if err != nil {
+		log.Printf("Error updating crypto prices: %v", err)
+	} else {
+		log.Println("Crypto prices updated successfully.")
+	}
+}
+
 func startServer() {
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -32,26 +42,15 @@ func startServer() {
 	r := core.SetupRouter()
 
 	go func() {
-		log.Println("Starting price update...")
-		err := core.UpdateCryptoPrices() // first execution
-		if err != nil {
-			log.Printf("Error updating crypto prices: %v", err)
-		} else {
-			log.Println("Crypto prices updated successfully.")
-		}
+		// first execution
+		updatecryptoPrices()
 
 		// execute every 10 minutes
 		ticker := time.NewTicker(10 * time.Minute)
 		defer ticker.Stop()
 
 		for range ticker.C {
-			log.Println("Update cache prices ...")
-			err := core.UpdateCryptoPrices()
-			if err != nil {
-				log.Printf("Error updating crypto prices: %v", err)
-			} else {
-				log.Println("Crypto prices updated successfully.")
-			}
+			updatecryptoPrices()
 		}
 	}()
 
