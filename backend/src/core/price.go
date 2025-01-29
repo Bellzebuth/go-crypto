@@ -48,29 +48,47 @@ func UpdateCryptoPrices() error {
 	defer resp.Body.Close()
 
 	now := time.Now()
-	if resp.StatusCode == 200 {
-		var result map[string]map[string]float64
-		err = json.NewDecoder(resp.Body).Decode(&result)
-		if err != nil {
-			return fmt.Errorf("failed to parse price response: %w", err)
-		}
 
-		for keyName, currencies := range result {
-			for _, price := range currencies {
-				// update cache
-				query := `INSERT INTO cache_prices (key_name, price, last_update) VALUES (?, ?, ?)
-    					ON CONFLICT(key_name) DO UPDATE SET
-        					price = excluded.price,
-        					last_update = excluded.last_update`
-
-				_, err = db.DB.Exec(query, keyName, utils.ConvertToMicroUnits(price), now)
-				if err != nil {
-					return fmt.Errorf("failed to insert price for %s: %w", keyName, err)
-				}
-			}
-		}
-	} else {
+	if resp.StatusCode != 200 {
 		return fmt.Errorf("failed request with status code %d", resp.StatusCode)
+	}
+
+	var result map[string]map[string]float64
+	err = json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		return fmt.Errorf("failed to parse price response: %w", err)
+	}
+
+	var prices []CachePrice
+
+	for keyName, currencies := range result {
+		for _, price := range currencies {
+			prices = append(prices, CachePrice{
+				KeyName:    keyName,
+				Price:      utils.ConvertToMicroUnits(price),
+				LastUpdate: now,
+			})
+		}
+	}
+
+	if len(prices) > 0 {
+		args := []interface{}{}
+		placeholders := []string{}
+		for _, p := range prices {
+			placeholders = append(placeholders, "(?, ?, ?)")
+			args = append(args, p.KeyName, p.Price, p.LastUpdate)
+		}
+
+		query := `INSERT INTO cache_prices (key_name, price, last_update) VALUES ` +
+			strings.Join(placeholders, ",") + ` 
+			ON CONFLICT(key_name) DO UPDATE SET
+				price = excluded.price,
+				last_update = excluded.last_update`
+
+		_, err = db.DB.Exec(query, args...)
+		if err != nil {
+			return fmt.Errorf("failed to batch insert prices: %w", err)
+		}
 	}
 
 	return nil

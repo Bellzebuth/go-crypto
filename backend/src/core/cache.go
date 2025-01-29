@@ -8,7 +8,7 @@ import (
 
 type CachePrice struct {
 	KeyName    string
-	Price      int
+	Price      int64
 	LastUpdate time.Time
 }
 

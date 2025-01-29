@@ -55,9 +55,9 @@ const AddCrypto: React.FC<AddCryptoProps> = ({ updateList }) => {
           required
         />
         <button
-          className="bg-[#0b004b] text-white rounded-md my-2 p-1 disabled:bg-gray-300"
+          className="bg-zinc-800 text-white rounded-md my-2 p-1 disabled:bg-gray-300"
           type="submit"
-          disabled={crypto.keyName === ""}
+          disabled={crypto.keyName === "" || amount == ""}
         >
           Add Crypto
         </button>
