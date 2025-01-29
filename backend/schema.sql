@@ -113,4 +113,5 @@ INSERT INTO cryptos (key_name, name) VALUES
 ('just', 'JUST'),
 ('dash', 'Dash'),
 ('balancer', 'Balancer'),
-('kusama', 'Kusama');
+('kusama', 'Kusama') 
+ON CONFLICT DO NOTHING;

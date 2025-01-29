@@ -30,13 +30,17 @@ func updatecryptoPrices() {
 	}
 }
 
-func startServer() {
+func startServer() error {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 
-	db.InitDB()
+	_, err := db.InitDB()
+	if err != nil {
+		return err
+	}
+
 	defer db.CloseDB()
 
 	r := core.SetupRouter()
@@ -56,8 +60,10 @@ func startServer() {
 
 	log.Printf("Server is running on port %s", port)
 	if err := r.Run(":" + port); err != nil {
-		log.Fatalf("Failed to run the server: %v", err)
+		return err
 	}
+
+	return nil
 }
 
 func main() {
@@ -71,7 +77,10 @@ func main() {
 	case "reset_db":
 		resetDB()
 	case "server":
-		startServer()
+		err := startServer()
+		if err != nil {
+			panic(err)
+		}
 	default:
 		log.Fatalf("Unknown command: %s\nAvailable commands: reset_db, server", command)
 	}

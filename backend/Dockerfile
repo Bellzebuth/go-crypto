@@ -1,32 +1,36 @@
-# Utiliser une image officielle de Go pour builder
+# load go image to build
 FROM golang:1.23 as builder
 
-# Définir le dossier de travail dans le conteneur
+
 WORKDIR /app
 
-# Copier les fichiers Go et les fichiers de dépendances
+# copy go files and dependencies
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Copier le reste du code backend
+# copy backend code left
 COPY . .
 
-# Compiler l'application Go
+# compile go app
 RUN go build -o main ./cmd/main.go
 
-# Image légère pour exécuter l'application
+# light image to execute app
 FROM debian:bookworm-slim
 
-# Définir le dossier de travail dans le conteneur
+
 WORKDIR /app
 
-# Copier le binaire depuis l'image builder
+# copy binary in builder
 COPY --from=builder /app/main .
 COPY schema.sql .
 
-# Exposer le port utilisé par le backend
+# install certificate
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
+
+
+# open port 8080
 EXPOSE 8080
 
-# Commande pour exécuter l'application
+# execute app
 CMD ["./main", "server"]
 

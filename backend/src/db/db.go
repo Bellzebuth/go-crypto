@@ -17,6 +17,8 @@ func InitDB() (*sql.DB, error) {
 		return nil, fmt.Errorf("failed to connect to database: %v", err)
 	}
 
+	DB = db
+
 	log.Println("No tables found. Initializing database from schema.sql...")
 	err = executeSQLFromFile(db, "schema.sql")
 	if err != nil {
