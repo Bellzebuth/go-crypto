@@ -19,7 +19,7 @@ type Asset struct {
 	CreatedAt      time.Time `json:"createdAt"`
 	Gain           float64   `json:"gain"`
 	PercentageGain float64   `json:"percentageGain"`
-	ActualPrice    int       `json:"actualPrice"`
+	ActualPrice    int64     `json:"actualPrice"`
 	ActualValue    float64   `json:"actualValue"`
 }
 

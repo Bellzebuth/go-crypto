@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"fmt"
 	"math"
 	"strconv"
@@ -16,14 +17,16 @@ func FormatPrecision(val float64, precision, digits int) (float64, error) {
 	return strconv.ParseFloat(stringValWithDigits, 64)
 }
 
-func CalculateGain(initialInvestment float64, purchasePrice float64, actualPrice int) (float64, float64, float64, error) {
-	var quantity float64
-
+func CalculateGain(initialInvestment float64, purchasePrice float64, actualPrice int64) (float64, float64, float64, error) {
 	if purchasePrice == 0 {
-		quantity = initialInvestment
-	} else {
-		quantity = initialInvestment / purchasePrice
+		return 0, 0, 0, errors.New("division by zero")
 	}
+
+	if purchasePrice == float64(actualPrice) {
+		return initialInvestment, 0, 0, nil
+	}
+
+	quantity := initialInvestment / purchasePrice
 
 	currentValue := quantity * float64(actualPrice)
 

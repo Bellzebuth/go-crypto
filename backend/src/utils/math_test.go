@@ -58,13 +58,14 @@ func TestCalculateGain(t *testing.T) {
 	tests := []struct {
 		initialInvestment      float64
 		PurchasedPrice         float64
-		newPrice               int
+		newPrice               int64
 		expectedTotal          float64
 		expectedGain           float64
 		expectedPercentageGain float64
 		expectedErr            error
 	}{
 		// Cas basiques
+		{200000000, 98331000000, 98331000000, 200000000, 0.0, 0, nil},
 		{20, 23500000, 23500000, 20.0, 0.0, 0, nil},
 		{1000, 500, 700, 1400.0, 400.0, 40, nil},
 		{2000, 1000, 1500, 3000.0, 1000.0, 50, nil},
