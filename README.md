@@ -58,15 +58,6 @@ frontend/
 
 ```
 
----
-
-## Prerequisites
-
-- **Golang**: Version 1.18 or higher
-- **SQLite**: Used as the database for storing portfolio data
-
----
-
 ## Getting Started
 
 ### 1. Clone the repository
@@ -76,37 +67,16 @@ git clone https://github.com/Bellzebuth/go-crypto.git
 cd go-crypto
 ```
 
-### 2. Install dependencies
+### 2. Build docker image
 
 ```bash
-cd backend
-go mod tidy
+docker-compose build
 ```
 
-```bash
-cd frontend
-npm install
-```
-
-### 3. Set up the database
-
-Run the following command to initialize the SQLite database:
+### 3. Run docker
 
 ```bash
-sqlite3 crypto.db < schema.sql
-```
-
-### 3. Run the application
-
-Run the following command to initialize the SQLite database:
-
-```bash
-go run backend/cmd/main server
-```
-
-```bash
-cd frontend
-npm run dev
+docker-compose up
 ```
 
 The application will be available at `http://localhost:5173` and the API will be available at `http://localhost:8080`
