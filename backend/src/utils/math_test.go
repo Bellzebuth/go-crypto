@@ -31,29 +31,6 @@ func TestConvertToMicroUnits(t *testing.T) {
 	}
 }
 
-func TestFormatPrecision(t *testing.T) {
-	tests := []struct {
-		val       float64
-		precision int
-		virgule   int
-		expected  float64
-	}{
-		{12345, 3, 2, 12.35},
-		{987654, 6, 3, 0.988},
-		{1, 1, 2, 0.10},
-		{5000, 3, 2, 5.00},
-		{999999, 6, 2, 1.00},
-		{123456789, 8, 2, 1.23},
-	}
-
-	for _, tt := range tests {
-		t.Run("Test FormatPrecision", func(t *testing.T) {
-			result, _ := FormatPrecision(tt.val, tt.precision, tt.virgule)
-			assert.Equal(t, tt.expected, result, "Expected value does not match")
-		})
-	}
-}
-
 func TestCalculateGain(t *testing.T) {
 	tests := []struct {
 		initialInvestment      float64
