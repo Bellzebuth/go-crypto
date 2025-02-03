@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/Bellzebuth/go-crypto/src/api"
 	"github.com/Bellzebuth/go-crypto/src/core"
 	"github.com/Bellzebuth/go-crypto/src/db"
 )
@@ -22,7 +23,7 @@ func resetDB() {
 
 func updatecryptoPrices() {
 	log.Println("Starting price update...")
-	err := core.UpdateCryptoPrices()
+	err := api.UpdateCryptoPrices()
 	if err != nil {
 		log.Printf("Error updating crypto prices: %v", err)
 	} else {

@@ -1,0 +1,96 @@
+package core
+
+import (
+	"net/http"
+
+	"github.com/Bellzebuth/go-crypto/src/db"
+	"github.com/Bellzebuth/go-crypto/src/models"
+	"github.com/gin-gonic/gin"
+)
+
+func ListSum(c *gin.Context) {
+	var totals []models.Transaction
+	err := db.DB.Model(&totals).
+		Relation("Address").
+		Relation("Price").
+		Relation("Price.Asset").
+		ColumnExpr("SUM(assets.value) AS value").
+		ColumnExpr("SUM(assets.purchased_price * assets.amount) / NULLIF(SUM(assets.amount), 0) AS avg_purchased_price").
+		GroupExpr("assets.key_name, cryptos.name, cache_prices.price").
+		Select()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	for i, asset := range totals {
+		computedAsset, err := asset.ComputeGain()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		totals[i] = computedAsset
+	}
+
+	c.JSON(http.StatusOK, totals)
+}
+
+func List(c *gin.Context) {
+	var transactions []models.Transaction
+	err := db.DB.Model(&transactions).
+		Relation("Address").
+		Relation("Price").
+		Relation("Price.Asset").
+		Select()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	var computedAssets []models.Transaction
+	for _, transaction := range transactions {
+		computedAsset, err := transaction.ComputeGain()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		computedAssets = append(computedAssets, computedAsset)
+	}
+
+	c.JSON(http.StatusOK, computedAssets)
+}
+
+// func GetTotals(c *gin.Context) {
+// 	rows, err := db.DB.Query(`SELECT cp.key_name, a.amount, a.purchased_price, cp.price
+// 		FROM assets AS a
+// 		LEFT JOIN cache_prices AS cp
+// 		ON a.key_name=cp.key_name`)
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+// 		return
+// 	}
+// 	defer rows.Close()
+
+// 	totalValue := 0.0
+// 	totalInvested := 0.0
+// 	for rows.Next() {
+// 		var asset Asset
+// 		if err := rows.Scan(&asset.KeyName, &asset.Amount, &asset.PurchasedPrice, &asset.ActualPrice); err != nil {
+// 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+// 			return
+// 		}
+
+// 		totalInvested += asset.Amount
+
+// 		value, _, _, err := utils.CalculateGain(asset.Amount, asset.PurchasedPrice, asset.ActualPrice)
+// 		if err != nil {
+// 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+// 			return
+// 		}
+
+// 		totalValue += value
+// 	}
+
+// 	c.JSON(http.StatusOK, gin.H{"totalInvested": totalInvested, "totalValue": fmt.Sprintf("%.2f", totalValue)})
+// }

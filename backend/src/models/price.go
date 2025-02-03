@@ -3,9 +3,10 @@ package models
 import "time"
 
 type Price struct {
-	Id          int
-	CryptoId    int
-	Crypto      Crypto
-	Value       int
-	LastUpdated time.Time
+	tableName  struct{} `pg:"prices"`
+	Id         int      `pg:",pk"`
+	AssetId    string
+	Asset      Asset `pg:"rel:has-one"`
+	Price      int64
+	LastUpdate time.Time
 }

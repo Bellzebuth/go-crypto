@@ -15,14 +15,14 @@ func SetupRouter() *gin.Engine {
 		AllowCredentials: true,
 	}))
 
-	r.POST("/portfolio/add", Add)
+	// r.POST("/address/add", AddAddress)
+	// r.DELETE("/address/:id", DeleteAddress)
+	r.GET("/address/list", List)
 
-	r.GET("/cryptos/list", Search)
-	r.GET("/portfolio/list", List)
-	r.GET("/portfolio/listsum", ListSum)
-	r.GET("/portfolio/total", GetTotals)
+	r.GET("/assets/search", SearchAsset)
 
-	r.DELETE("/portfolio/:id", Delete)
+	r.GET("/transactions/listsum", ListSum)
+	r.GET("/transactions/list", List)
 
 	// r.POST("/portfolio/dca", SimulateDCAHandler)
 

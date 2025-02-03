@@ -1,7 +1,8 @@
 package models
 
 type User struct {
-	ID       int64  `pg:",pk"`
-	Username string `pg:",unique"`
-	Password string
+	tableName struct{} `pg:"users"`
+	Id        int64    `pg:",pk"`
+	Username  string   `pg:",unique"`
+	Password  string
 }
