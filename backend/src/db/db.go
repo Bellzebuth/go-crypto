@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/go-pg/pg/v10"
 )
@@ -11,9 +12,9 @@ var DB *pg.DB
 
 func ConnectDB() error {
 	dbName := "crypto"
-	user := "bellzebuth"
-	password := "password" // ENV VARIABLE
-	addr := "localhost:5432"
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	addr := os.Getenv("DB_HOST") + ":" + os.Getenv("DB_PORT")
 
 	// connection to postgres
 	tempDB := pg.Connect(&pg.Options{

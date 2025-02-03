@@ -16,5 +16,5 @@ vendor/
 *.log
 *.lock
 
-# db
-crypto.db
+# env
+.env

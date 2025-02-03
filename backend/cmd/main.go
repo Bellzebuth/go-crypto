@@ -8,6 +8,7 @@ import (
 	"github.com/Bellzebuth/go-crypto/src/api"
 	"github.com/Bellzebuth/go-crypto/src/core"
 	"github.com/Bellzebuth/go-crypto/src/db"
+	"github.com/joho/godotenv"
 )
 
 func resetDB() {
@@ -32,13 +33,18 @@ func updatecryptoPrices() {
 }
 
 func startServer() error {
+	err := godotenv.Load()
+	if err != nil {
+		return err
+	}
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 
 	// db connexion
-	err := db.ConnectDB()
+	err = db.ConnectDB()
 	if err != nil {
 		return err
 	}
