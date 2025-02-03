@@ -37,7 +37,7 @@ const AddCrypto: React.FC<AddCryptoProps> = ({ updateList }) => {
           updateList();
         });
     } catch (error) {
-      alert("Price is unavailable for this crypto...");
+      alert("Price is unavailable for this crypto…");
       console.error("Error adding crypto:", error);
     }
   };

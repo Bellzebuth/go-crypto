@@ -10,7 +10,7 @@ import (
 )
 
 func resetDB() {
-	log.Println("Resetting the database...")
+	log.Println("Resetting the database…")
 
 	err := db.ResetDB()
 	if err != nil {
@@ -21,7 +21,7 @@ func resetDB() {
 }
 
 func updatecryptoPrices() {
-	log.Println("Starting price update...")
+	log.Println("Starting price update…")
 	err := core.UpdateCryptoPrices()
 	if err != nil {
 		log.Printf("Error updating crypto prices: %v", err)

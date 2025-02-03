@@ -19,7 +19,7 @@ func InitDB() (*sql.DB, error) {
 
 	DB = db
 
-	log.Println("No tables found. Initializing database from schema.sql...")
+	log.Println("No tables found. Initializing database from schema.sql…")
 	err = executeSQLFromFile(db, "schema.sql")
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize database: %v", err)
