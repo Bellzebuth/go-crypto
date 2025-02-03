@@ -36,12 +36,17 @@ func startServer() error {
 		port = "8080"
 	}
 
-	_, err := db.InitDB()
+	// db connexion
+	err := db.ConnectDB()
 	if err != nil {
 		return err
 	}
 
+	// close connexion at the end
 	defer db.CloseDB()
+
+	// do migration
+	db.MigrateDB()
 
 	r := core.SetupRouter()
 

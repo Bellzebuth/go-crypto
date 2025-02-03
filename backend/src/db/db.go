@@ -1,50 +1,72 @@
 package db
 
 import (
-	"database/sql"
+	"context"
 	"fmt"
-	"log"
-	"os"
 
-	_ "github.com/mattn/go-sqlite3"
+	"github.com/go-pg/pg/v10"
 )
 
-var DB *sql.DB
+var DB *pg.DB
 
-func InitDB() (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", "crypto.db")
+func ConnectDB() error {
+	dbName := "crypto"
+	user := "bellzebuth"
+	password := "password" // ENV VARIABLE
+	addr := "localhost:5432"
+
+	// connection to postgres
+	tempDB := pg.Connect(&pg.Options{
+		Addr:     addr,
+		User:     user,
+		Password: password,
+		Database: "postgres",
+	})
+
+	exists, err := databaseExists(tempDB, dbName)
 	if err != nil {
-		return nil, fmt.Errorf("failed to connect to database: %v", err)
+		return err
 	}
 
-	DB = db
-
-	log.Println("No tables found. Initializing database from schema.sql...")
-	err = executeSQLFromFile(db, "schema.sql")
-	if err != nil {
-		return nil, fmt.Errorf("failed to initialize database: %v", err)
-	}
-	log.Println("Database initialized successfully.")
-
-	return db, nil
-}
-
-func executeSQLFromFile(db *sql.DB, filename string) error {
-	script, err := os.ReadFile(filename)
-	if err != nil {
-		return fmt.Errorf("failed to read file %s: %v", filename, err)
+	if !exists {
+		fmt.Println("📦 Database creation…")
+		err := createDatabase(tempDB, dbName)
+		if err != nil {
+			return err
+		}
+		fmt.Println("✅ Database created")
 	}
 
-	_, err = db.Exec(string(script))
-	if err != nil {
-		return fmt.Errorf("failed to execute script: %v", err)
+	tempDB.Close()
+
+	// connection to the main database
+	DB = pg.Connect(&pg.Options{
+		Addr:     addr,
+		User:     user,
+		Password: password,
+		Database: dbName,
+	})
+
+	// check connection
+	if err := DB.Ping(context.Background()); err != nil {
+		return err
 	}
 
+	fmt.Println("✅ Connected")
 	return nil
 }
 
+func databaseExists(db *pg.DB, dbName string) (bool, error) {
+	var exists bool
+	_, err := db.QueryOne(pg.Scan(&exists), "SELECT EXISTS (SELECT 1 FROM pg_database WHERE datname = ?)", dbName)
+	return exists, err
+}
+
+func createDatabase(db *pg.DB, dbName string) error {
+	_, err := db.Exec(fmt.Sprintf("CREATE DATABASE %s", dbName))
+	return err
+}
+
 func CloseDB() {
-	if DB != nil {
-		DB.Close()
-	}
+	DB.Close()
 }
