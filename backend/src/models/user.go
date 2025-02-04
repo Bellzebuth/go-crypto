@@ -3,10 +3,9 @@ package models
 import "golang.org/x/crypto/bcrypt"
 
 type User struct {
-	tableName struct{} `pg:"users"`
-	Id        int64    `pg:",pk"`
-	Username  string   `pg:",unique"`
-	Password  string
+	Id       int64  `pg:",pk"`
+	Username string `pg:",unique"`
+	Password string
 }
 
 func (u *User) HashPassword() error {

@@ -4,20 +4,7 @@ import (
 	"github.com/Bellzebuth/go-crypto/src/utils"
 )
 
-// type Transaction struct {
-// 	tableName      struct{} `pg:"transactions"`
-// 	Id             int      `pg:",pk"`
-// 	AddressId      int
-// 	Address        Address `pg:"rel:has-one"`
-// 	PriceId        int
-// 	Price          Price `pg:"rel:has-one"`
-// 	Timestamp      time.Time
-// 	Value          int64
-// 	PurchasedPrice int64
-// }
-
 type Transaction struct {
-	tableName         struct{} `pg:"transactions"`
 	AddressId         int
 	Address           Address `pg:"rel:has-one"`
 	PriceId           int

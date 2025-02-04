@@ -17,7 +17,7 @@ var priceURL = "https://api.coingecko.com/api/v3/simple/price"
 func buildURL() (string, error) {
 	var assets []string
 	err := db.DB.Model(&models.Asset{}).
-		Column("key_name").
+		Column("id").
 		Select(&assets)
 	if err != nil {
 		return "", err
@@ -62,13 +62,14 @@ func UpdateCryptoPrices() error {
 		}
 	}
 
-	_, err = db.DB.Model(&prices).
-		OnConflict("key_name").
-		Set(`price = excluded.price,
-				last_update = excluded.last_update`).
-		Insert()
-	if err != nil {
-		return err
+	if len(prices) > 0 {
+		_, err = db.DB.Model(&prices).
+			OnConflict("(asset_id) DO UPDATE").
+			Set("price = excluded.price, last_update = excluded.last_update").
+			Insert()
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

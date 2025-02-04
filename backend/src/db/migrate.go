@@ -7,9 +7,13 @@ import (
 	"github.com/go-pg/pg/v10/orm"
 )
 
-func MigrateDB() {
+func MigrateDB() error {
 	models := []interface{}{
-		(*models.User)(nil),
+		&models.User{},
+		&models.Address{},
+		&models.Asset{},
+		&models.Price{},
+		&models.Transaction{},
 	}
 
 	for _, model := range models {
@@ -17,9 +21,17 @@ func MigrateDB() {
 			IfNotExists: true,
 		})
 		if err != nil {
-			log.Fatalf("Erreur de migration: %v", err)
+			return err
 		}
 	}
 
+	_, err := DB.Model(&AssetsList).
+		OnConflict("DO NOTHING").
+		Insert()
+	if err != nil {
+		return err
+	}
+
 	log.Println("✅ Migration réussie")
+	return nil
 }

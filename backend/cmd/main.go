@@ -42,7 +42,10 @@ func startServer() error {
 	defer db.CloseDB()
 
 	// do migration
-	db.MigrateDB()
+	err = db.MigrateDB()
+	if err != nil {
+		return err
+	}
 
 	r := controllers.SetupRouter()
 
