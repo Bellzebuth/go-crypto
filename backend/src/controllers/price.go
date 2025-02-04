@@ -1,4 +1,4 @@
-package core
+package controllers
 
 import (
 	"github.com/Bellzebuth/go-crypto/src/db"

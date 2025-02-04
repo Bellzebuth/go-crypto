@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/Bellzebuth/go-crypto/src/api"
-	"github.com/Bellzebuth/go-crypto/src/core"
+	"github.com/Bellzebuth/go-crypto/src/controllers"
 	"github.com/Bellzebuth/go-crypto/src/db"
 	"github.com/joho/godotenv"
 )
@@ -44,7 +44,7 @@ func startServer() error {
 	// do migration
 	db.MigrateDB()
 
-	r := core.SetupRouter()
+	r := controllers.SetupRouter()
 
 	go func() {
 		// first execution
