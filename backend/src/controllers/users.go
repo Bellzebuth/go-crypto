@@ -55,7 +55,7 @@ func Login(c *gin.Context) {
 	}
 
 	// set cookie
-	c.SetCookie("session_token", creds.Username, 3600, "/", "", false, true)
+	c.SetCookie("session_token", creds.Username, 3600, "/", "", false, false)
 
 	c.JSON(http.StatusOK, gin.H{"message": "Logged in"})
 }

@@ -1,13 +1,21 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Homepage from "./pages/Homepage";
+import Home from "./pages/Homepage";
+import Authentication from "./pages/Authentication";
+import ProtectedRoute from "./routes/ProtectedRoutes";
+import { AuthProvider } from "./context/AuthContext";
 
 const App: React.FC = () => {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Homepage />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path="/auth" element={<Authentication />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<Home />} />
+          </Route>
+        </Routes>
+      </AuthProvider>
     </Router>
   );
 };
