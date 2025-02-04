@@ -11,17 +11,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func resetDB() {
-	log.Println("Resetting the database...")
-
-	err := db.ResetDB()
-	if err != nil {
-		log.Fatalf("Failed to reset the database: %v", err)
-	}
-
-	log.Println("Database reset successfully.")
-}
-
 func updatecryptoPrices() {
 	log.Println("Starting price update...")
 	err := api.UpdateCryptoPrices()
@@ -86,8 +75,6 @@ func main() {
 	command := os.Args[1]
 
 	switch command {
-	case "reset_db":
-		resetDB()
 	case "server":
 		err := startServer()
 		if err != nil {
