@@ -15,18 +15,26 @@ func SetupRouter() *gin.Engine {
 		AllowCredentials: true,
 	}))
 
-	// r.POST("/address/add", AddAddress)
-	// r.DELETE("/address/:id", DeleteAddress)
-	r.GET("/address/list", List)
+	r.POST("/register", Register)
+	r.POST("/login", Login)
+	r.GET("/logout", Logout)
 
-	r.GET("/assets/search", SearchAsset)
+	auth := r.Group("/")
+	auth.Use(AuthMiddleware())
+	auth.GET("/protected", ProtectedRoute)
 
-	r.GET("/transactions/listsum", ListSum)
-	r.GET("/transactions/list", List)
+	// auth.POST("/address/add", AddAddress)
+	// auth.DELETE("/address/:id", DeleteAddress)
+	auth.GET("/address/list", List)
 
-	// r.POST("/portfolio/dca", SimulateDCAHandler)
+	auth.GET("/assets/search", SearchAsset)
 
-	// r.GET("/portfolio/charts", GetPortfolioChart)
+	auth.GET("/transactions/listsum", ListSum)
+	auth.GET("/transactions/list", List)
+
+	// auth.POST("/portfolio/dca", SimulateDCAHandler)
+
+	// auth.GET("/portfolio/charts", GetPortfolioChart)
 
 	return r
 }
