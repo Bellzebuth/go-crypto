@@ -5,10 +5,12 @@ import (
 )
 
 type Transaction struct {
+	Id                string `pg:",pk"`
 	AddressId         int
 	Address           Address `pg:"rel:has-one"`
 	PriceId           int
 	Price             Price `pg:"rel:has-one"`
+	TimeStamp         string
 	Value             int64
 	AvgPurchasedPrice float64
 

@@ -14,7 +14,7 @@ import (
 
 var priceURL = "https://api.coingecko.com/api/v3/simple/price"
 
-func buildURL() (string, error) {
+func buildCoinGeckoURL() (string, error) {
 	var assets []string
 	err := db.DB.Model(&models.Asset{}).
 		Column("id").
@@ -27,7 +27,7 @@ func buildURL() (string, error) {
 }
 
 func UpdateCryptoPrices() error {
-	url, err := buildURL()
+	url, err := buildCoinGeckoURL()
 	if err != nil {
 		return err
 	}

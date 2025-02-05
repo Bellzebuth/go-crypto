@@ -79,3 +79,7 @@ func DeleteAddress(c *gin.Context) {
 
 	c.JSON(http.StatusOK, address)
 }
+
+func LoadAddress(c *gin.Context) {
+
+}
