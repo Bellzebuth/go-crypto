@@ -11,7 +11,7 @@ import (
 var DB *pg.DB
 
 func ConnectDB() error {
-	dbName := "crypto"
+	dbName := os.Getenv("DB_NAME")
 	user := os.Getenv("DB_USER")
 	password := os.Getenv("DB_PASSWORD")
 	addr := os.Getenv("DB_HOST") + ":" + os.Getenv("DB_PORT")
@@ -54,6 +54,31 @@ func ConnectDB() error {
 	}
 
 	fmt.Println("✅ Connected")
+	return nil
+}
+
+func ResetDB() error {
+	dbName := os.Getenv("DB_NAME")
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	addr := os.Getenv("DB_HOST") + ":" + os.Getenv("DB_PORT")
+
+	fmt.Println(user, password, addr)
+
+	// connection to postgres
+	tempDB := pg.Connect(&pg.Options{
+		Addr:     addr,
+		User:     user,
+		Password: password,
+		Database: "postgres",
+	})
+
+	_, err := tempDB.Exec(fmt.Sprintf("DROP DATABASE %s;", dbName))
+	if err != nil {
+		return fmt.Errorf("failed to drop table %s: %w", dbName, err)
+	}
+
+	fmt.Println("✅ Databse deleted")
 	return nil
 }
 

@@ -21,6 +21,25 @@ func updatecryptoPrices() {
 	}
 }
 
+func resetDBAndStart() error {
+	err := godotenv.Load()
+	if err != nil {
+		return err
+	}
+
+	err = db.ResetDB()
+	if err != nil {
+		return err
+	}
+
+	err = startServer()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func startServer() error {
 	err := godotenv.Load()
 	if err != nil {
@@ -78,6 +97,11 @@ func main() {
 	command := os.Args[1]
 
 	switch command {
+	case "reset":
+		err := resetDBAndStart()
+		if err != nil {
+			panic(err)
+		}
 	case "server":
 		err := startServer()
 		if err != nil {
