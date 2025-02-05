@@ -1,12 +1,28 @@
 package controllers
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/Bellzebuth/go-crypto/src/db"
 	"github.com/Bellzebuth/go-crypto/src/models"
 	"github.com/gin-gonic/gin"
 )
+
+func GetUserFromRequest(c *gin.Context) (*models.User, error) {
+	userInterface, exists := c.Get("user")
+	if !exists {
+		return nil, errors.New("inexistant user")
+	}
+
+	// try cast
+	user, ok := userInterface.(models.User)
+	if !ok {
+		return nil, errors.New("failed to cast user")
+	}
+
+	return &user, nil
+}
 
 func Register(c *gin.Context) {
 	var user models.User
@@ -64,30 +80,6 @@ func Logout(c *gin.Context) {
 	// delete cookie
 	c.SetCookie("session_token", "", -1, "/", "", false, true)
 	c.JSON(http.StatusOK, gin.H{"message": "Logged out"})
-}
-
-func AuthMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		username, err := c.Cookie("session_token")
-		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-			c.Abort()
-			return
-		}
-
-		// check user
-		var user models.User
-		err = db.DB.Model(&user).Where("username = ?", username).Select()
-		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid session"})
-			c.Abort()
-			return
-		}
-
-		// add user to context
-		c.Set("user", user)
-		c.Next()
-	}
 }
 
 func ProtectedRoute(c *gin.Context) {

@@ -14,6 +14,7 @@ func MigrateDB() error {
 		&models.Asset{},
 		&models.Price{},
 		&models.Transaction{},
+		&models.Blockchain{},
 	}
 
 	for _, model := range models {
@@ -26,7 +27,14 @@ func MigrateDB() error {
 	}
 
 	_, err := DB.Model(&AssetsList).
-		OnConflict("DO NOTHING").
+		OnConflict("(id) DO NOTHING").
+		Insert()
+	if err != nil {
+		return err
+	}
+
+	_, err = DB.Model(&BlockchainList).
+		OnConflict("(name) DO NOTHING").
 		Insert()
 	if err != nil {
 		return err

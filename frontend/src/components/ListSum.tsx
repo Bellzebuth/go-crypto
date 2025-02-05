@@ -1,30 +1,30 @@
-import React, { useEffect, useState } from "react";
-import clsx from "clsx";
-import api from "../services/api";
-import AddCrypto from "./Add";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import ListDetails from "./ListDetails";
+import React, { useEffect, useState } from "react"
+import clsx from "clsx"
+import api from "../services/api"
+import { ChevronDown, ChevronUp } from "lucide-react"
+import ListDetails from "./ListDetails"
 import {
   formatToPercentage,
   formatToTwoDecimalsPrice,
-} from "../services/format";
-import Totals from "./Totals";
+} from "../services/format"
+import Totals from "./Totals"
+import AddAddress from "./AddAddress"
 
 type CryptoSum = {
-  keyName: string;
+  keyName: string
   crypto: {
-    keyName: string;
-    name: string;
-  };
-  amount: number;
-  gain: number;
-  percentageGain: number;
-  actualPrice: number;
-  actualValue: number;
-};
+    keyName: string
+    name: string
+  }
+  amount: number
+  gain: number
+  percentageGain: number
+  actualPrice: number
+  actualValue: number
+}
 
 const Row: React.FC<{ item: CryptoSum }> = ({ item }) => {
-  const [showDetails, setShowDetails] = useState<boolean>(false);
+  const [showDetails, setShowDetails] = useState<boolean>(false)
 
   return (
     <div>
@@ -57,27 +57,22 @@ const Row: React.FC<{ item: CryptoSum }> = ({ item }) => {
       </div>
       {showDetails && <ListDetails keyName={item.keyName} />}
     </div>
-  );
-};
+  )
+}
 
 const ListSumCryptos: React.FC = () => {
-  const [list, setList] = useState<CryptoSum[]>([]);
-  const [needUpdate, setNeedUpdate] = useState<number>(0);
-
-  const incrementNeedUpdate = () => {
-    setNeedUpdate((prev) => prev + 1);
-  };
+  const [list, setList] = useState<CryptoSum[]>([])
 
   useEffect(() => {
     api
       .get("/portfolio/listsum")
-      .then((response) => setList(response.data))
-      .catch((error) => console.error("Error fetching portfolio:", error));
-  }, [needUpdate]);
+      .then(response => setList(response.data))
+      .catch(error => console.error("Error fetching portfolio:", error))
+  }, [])
 
   return (
     <div className="bg-white rounded-md w-full m-1 p-2">
-      <AddCrypto updateList={incrementNeedUpdate} />
+      <AddAddress />
       {!list || list.length === 0 ? (
         <div />
       ) : (
@@ -100,7 +95,7 @@ const ListSumCryptos: React.FC = () => {
       )}
       <Totals />
     </div>
-  );
-};
+  )
+}
 
-export default ListSumCryptos;
+export default ListSumCryptos

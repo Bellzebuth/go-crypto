@@ -1,26 +1,26 @@
-import React, { useState } from "react";
-import api from "../services/api";
-import Autocomplete from "./Autocomplete";
+import React, { useState } from "react"
+import api from "../services/api"
+import Autocomplete from "../UI/Autocomplete"
 
 export type Crypto = {
-  keyName: string;
-  name: string;
-};
+  keyName: string
+  name: string
+}
 
 interface AddCryptoProps {
-  updateList: () => void;
+  updateList: () => void
 }
 
 const AddCrypto: React.FC<AddCryptoProps> = ({ updateList }) => {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState("")
   const [crypto, setCrypto] = useState<Crypto>({
     keyName: "",
     name: "",
-  });
-  const [amount, setAmount] = useState("");
+  })
+  const [amount, setAmount] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
       await api
         .post("/portfolio/add", {
@@ -28,19 +28,19 @@ const AddCrypto: React.FC<AddCryptoProps> = ({ updateList }) => {
           amount: parseFloat(amount),
         })
         .then(() => {
-          setQuery("");
-          setAmount("");
+          setQuery("")
+          setAmount("")
           setCrypto({
             keyName: "",
             name: "",
-          });
-          updateList();
-        });
+          })
+          updateList()
+        })
     } catch (error) {
-      alert("Price is unavailable for this crypto...");
-      console.error("Error adding crypto:", error);
+      alert("Price is unavailable for this crypto...")
+      console.error("Error adding crypto:", error)
     }
-  };
+  }
 
   return (
     <div className="mb-2 border-b border-zinc-800">
@@ -50,7 +50,7 @@ const AddCrypto: React.FC<AddCryptoProps> = ({ updateList }) => {
         <input
           placeholder="Amount (€)"
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          onChange={e => setAmount(e.target.value)}
           className="border border-gray-300 rounded-md focus:border-[#0b004b] focus:outline-none p-1 my-2"
           required
         />
@@ -63,7 +63,7 @@ const AddCrypto: React.FC<AddCryptoProps> = ({ updateList }) => {
         </button>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default AddCrypto;
+export default AddCrypto

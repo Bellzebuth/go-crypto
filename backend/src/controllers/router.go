@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/Bellzebuth/go-crypto/src/middleware"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -20,12 +21,15 @@ func SetupRouter() *gin.Engine {
 	r.GET("/logout", Logout)
 
 	auth := r.Group("/")
-	auth.Use(AuthMiddleware())
+	auth.Use(middleware.AuthMiddleware())
 	auth.GET("/protected", ProtectedRoute)
 
 	// auth.POST("/address/add", AddAddress)
 	// auth.DELETE("/address/:id", DeleteAddress)
-	auth.GET("/address/list", List)
+	auth.POST("/address/add", AddAddress)
+	auth.GET("/address/list", ListAddress)
+
+	auth.GET("/blockchain/list", ListBlockchain)
 
 	auth.GET("/assets/search", SearchAsset)
 
