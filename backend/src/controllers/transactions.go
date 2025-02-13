@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
+	"github.com/Bellzebuth/go-crypto/src/api"
 	"github.com/Bellzebuth/go-crypto/src/db"
 	"github.com/Bellzebuth/go-crypto/src/models"
 	"github.com/gin-gonic/gin"
@@ -59,6 +61,43 @@ func List(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, computedAssets)
+}
+
+func LoadTransactions(address models.Address) error {
+	transactions, err := api.GetTransactions(address)
+	if err != nil {
+		return err
+	}
+
+	if len(transactions) > 0 {
+		_, err := db.DB.Model(&transactions).
+			OnConflict("(id) DO NOTHING").
+			Insert()
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func UpdateTransactions(userId int) error {
+	addresses, err := listaddresses(userId)
+	if err != nil {
+		return err
+	}
+
+	// first execution
+	fmt.Println("downloading transactions…")
+	for _, address := range addresses {
+		err = LoadTransactions(address)
+		if err != nil {
+			return err
+		}
+	}
+	fmt.Println("transactions downloaded")
+
+	return nil
 }
 
 // func GetTotals(c *gin.Context) {

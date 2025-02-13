@@ -27,7 +27,7 @@ func SetupRouter() *gin.Engine {
 	// auth.POST("/address/add", AddAddress)
 	// auth.DELETE("/address/:id", DeleteAddress)
 	auth.POST("/address/add", AddAddress)
-	auth.GET("/address/list", ListAddress)
+	auth.GET("/address/list", ListAddresses)
 
 	auth.GET("/blockchain/list", ListBlockchain)
 

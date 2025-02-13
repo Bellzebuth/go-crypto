@@ -65,7 +65,7 @@ const ListSumCryptos: React.FC = () => {
 
   useEffect(() => {
     api
-      .get("/portfolio/listsum")
+      .get("/transactions/listsum")
       .then(response => setList(response.data))
       .catch(error => console.error("Error fetching portfolio:", error))
   }, [])
