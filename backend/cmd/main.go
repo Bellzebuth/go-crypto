@@ -91,7 +91,7 @@ func startServer() error {
 
 func main() {
 	if len(os.Args) < 2 {
-		log.Fatalf("Usage: go run main.go <command>\nAvailable commands: reset, server")
+		log.Fatalf("Usage: go run main.go <command>\nAvailable commands: reset, start")
 	}
 
 	command := os.Args[1]
@@ -102,12 +102,12 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-	case "server":
+	case "start":
 		err := startServer()
 		if err != nil {
 			panic(err)
 		}
 	default:
-		log.Fatalf("Unknown command: %s\nAvailable commands: reset, server", command)
+		log.Fatalf("Unknown command: %s\nAvailable commands: reset, start", command)
 	}
 }
