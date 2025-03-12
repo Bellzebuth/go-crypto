@@ -34,23 +34,23 @@ const Dropdown = <T extends { name: string }>({
   }
 
   return (
-    <div className="relative w-64">
+    <div className="relative">
       <div
-        className="relative bg-white rounded-md border border-gray-400 h-8"
+        className="relative bg-white rounded-md border border-zinc-300 h-8 px-2 py-1"
         onClick={() => setIsOpen(!isOpen)}
       >
         {value.name}
         <ChevronDown className="absolute right-2 top-1" />
       </div>
       {isOpen && (
-        <div className="absolute left-0 mt-2 w-full bg-white border rounded-lg shadow-lg">
+        <div className="absolute left-0 mt-2 w-full bg-zinc-100 overflow-hidden border rounded-lg shadow-lg">
           {error && <p className="text-red-500 p-2">{error}</p>}
           {!error && (
             <ul>
               {items.map((item, index) => (
                 <li
                   key={index}
-                  className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                  className="px-4 py-1 hover:bg-blue-600 hover:text-white cursor-pointer"
                   onClick={() => handleClick(item)}
                 >
                   {item.name}

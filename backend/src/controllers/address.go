@@ -43,7 +43,8 @@ func AddAddress(c *gin.Context) {
 func listaddresses(userId int) ([]models.Address, error) {
 	var addresses []models.Address
 	err := db.DB.Model(&addresses).
-		Where("id = ?", userId).
+		Relation("Blockchain").
+		Where("address.user_id = ?", userId).
 		Select()
 	if err != nil {
 		return nil, err
@@ -75,9 +76,9 @@ func DeleteAddress(c *gin.Context) {
 		return
 	}
 
-	var address string
+	var addressId int
 
-	err = c.ShouldBindJSON(&address)
+	err = c.ShouldBindJSON(&addressId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
 		return
@@ -85,12 +86,12 @@ func DeleteAddress(c *gin.Context) {
 
 	_, err = db.DB.Model(&models.Address{}).
 		Where("user_id = ?", user.Id).
-		Where("address = ?", address).
+		Where("id = ?", addressId).
 		Delete()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Can't insert address"})
 		return
 	}
 
-	c.JSON(http.StatusOK, address)
+	c.JSON(http.StatusOK, addressId)
 }

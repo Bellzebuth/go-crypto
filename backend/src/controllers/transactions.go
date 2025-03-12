@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/Bellzebuth/go-crypto/src/api"
 	"github.com/Bellzebuth/go-crypto/src/db"
@@ -11,28 +12,35 @@ import (
 )
 
 func ListSum(c *gin.Context) {
+	addressId, err := strconv.Atoi(c.Query("addressId"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid addressId"})
+		return
+	}
+
 	var totals []models.Transaction
-	err := db.DB.Model(&totals).
+	err = db.DB.Model(&totals).
 		Relation("Address").
 		Relation("Price").
 		Relation("Price.Asset").
-		ColumnExpr("SUM(assets.value) AS value").
-		ColumnExpr("SUM(assets.purchased_price * assets.amount) / NULLIF(SUM(assets.amount), 0) AS avg_purchased_price").
-		GroupExpr("assets.key_name, cryptos.name, cache_prices.price").
+		ColumnExpr("SUM(value) AS value").
+		ColumnExpr("SUM(purchased_price * value) / NULLIF(SUM(value), 1) AS purchased_price").
+		Where("address_id = ?", addressId).
+		Group("price__asset.name", "address_id", "address.id", "price.id", "price__asset.id").
 		Select()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	for i, asset := range totals {
-		computedAsset, err := asset.ComputeGain()
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-		totals[i] = computedAsset
-	}
+	// for i, asset := range totals {
+	// 	computedAsset, err := asset.ComputeGain()
+	// 	if err != nil {
+	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// 		return
+	// 	}
+	// 	totals[i] = computedAsset
+	// }
 
 	c.JSON(http.StatusOK, totals)
 }
