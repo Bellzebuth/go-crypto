@@ -1,9 +1,9 @@
 import React, { useState } from "react"
-import ListSumCryptos from "../components/ListSum"
 import { LogOut } from "lucide-react"
 import { useAuth } from "../context/AuthContext"
 import AddAddress from "../components/AddAddress"
 import ListAddress from "../components/ListAddress"
+import Dashboard from "./Dashboard"
 
 const Home: React.FC = () => {
   const { logout } = useAuth()
@@ -30,7 +30,7 @@ const Home: React.FC = () => {
           <LogOut className="absolute right-2 top-1" />
         </button>
       </div>
-      {addressId != 0 && <ListSumCryptos addressId={addressId} />}
+      {addressId != 0 && <Dashboard addressId={addressId} />}
     </div>
   )
 }

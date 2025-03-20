@@ -11,46 +11,53 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ListSum(c *gin.Context) {
+// func ListSum(c *gin.Context) {
+// 	addressId, err := strconv.Atoi(c.Query("addressId"))
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid addressId"})
+// 		return
+// 	}
+
+// 	var totals []models.Transaction
+// 	err = db.DB.Model(&totals).
+// 		Relation("Address").
+// 		Relation("Price").
+// 		Relation("Price.Asset").
+// 		ColumnExpr("SUM(value) AS value").
+// 		ColumnExpr("SUM(purchased_price * value) / NULLIF(SUM(value), 1) AS purchased_price").
+// 		Where("address_id = ?", addressId).
+// 		Group("price__asset.name", "address_id", "address.id", "price.id", "price__asset.id").
+// 		Select()
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+// 		return
+// 	}
+
+// 	// for i, asset := range totals {
+// 	// 	computedAsset, err := asset.ComputeGain()
+// 	// 	if err != nil {
+// 	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+// 	// 		return
+// 	// 	}
+// 	// 	totals[i] = computedAsset
+// 	// }
+
+// 	c.JSON(http.StatusOK, totals)
+// }
+
+func List(c *gin.Context) {
 	addressId, err := strconv.Atoi(c.Query("addressId"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid addressId"})
 		return
 	}
 
-	var totals []models.Transaction
-	err = db.DB.Model(&totals).
-		Relation("Address").
-		Relation("Price").
-		Relation("Price.Asset").
-		ColumnExpr("SUM(value) AS value").
-		ColumnExpr("SUM(purchased_price * value) / NULLIF(SUM(value), 1) AS purchased_price").
-		Where("address_id = ?", addressId).
-		Group("price__asset.name", "address_id", "address.id", "price.id", "price__asset.id").
-		Select()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	// for i, asset := range totals {
-	// 	computedAsset, err := asset.ComputeGain()
-	// 	if err != nil {
-	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	// 		return
-	// 	}
-	// 	totals[i] = computedAsset
-	// }
-
-	c.JSON(http.StatusOK, totals)
-}
-
-func List(c *gin.Context) {
 	var transactions []models.Transaction
-	err := db.DB.Model(&transactions).
+	err = db.DB.Model(&transactions).
 		Relation("Address").
 		Relation("Price").
 		Relation("Price.Asset").
+		Where("address_id = ?", addressId).
 		Select()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -79,7 +86,8 @@ func LoadTransactions(address models.Address) error {
 
 	if len(transactions) > 0 {
 		_, err := db.DB.Model(&transactions).
-			OnConflict("(id) DO NOTHING").
+			OnConflict("(id) DO UPDATE").
+			Set("purchased_price = EXCLUDED.purchased_price").
 			Insert()
 		if err != nil {
 			return err

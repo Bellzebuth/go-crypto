@@ -33,7 +33,7 @@ func SetupRouter() *gin.Engine {
 
 	auth.GET("/assets/search", SearchAsset)
 
-	auth.GET("/transactions/listsum", ListSum)
+	// auth.GET("/transactions/listsum", ListSum)
 	auth.GET("/transactions/list", List)
 
 	// auth.POST("/portfolio/dca", SimulateDCAHandler)

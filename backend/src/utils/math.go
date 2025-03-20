@@ -2,6 +2,7 @@ package utils
 
 import (
 	"errors"
+	"fmt"
 	"math"
 )
 
@@ -17,6 +18,8 @@ func CalculateGain(initialInvestment float64, purchasePrice float64, actualPrice
 	if purchasePrice == float64(actualPrice) {
 		return initialInvestment, 0, 0, nil
 	}
+
+	fmt.Println(initialInvestment, purchasePrice, actualPrice)
 
 	quantity := initialInvestment / purchasePrice
 

@@ -1,13 +1,10 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import clsx from "clsx"
-import api from "../services/api"
 import { ChevronDown, ChevronUp } from "lucide-react"
-// import ListDetails from "./ListDetails"
 import {
   formatToPercentage,
   formatToTwoDecimalsPrice,
 } from "../services/format"
-import Totals from "./Totals"
 
 const Row: React.FC<{ item: TransactionSum }> = ({ item }) => {
   const [showDetails, setShowDetails] = useState<boolean>(false)
@@ -46,20 +43,11 @@ const Row: React.FC<{ item: TransactionSum }> = ({ item }) => {
   )
 }
 
-interface ListSumCryptosProps {
-  addressId: number
+interface TransactionsProps {
+  list: TransactionSum[]
 }
 
-const ListSumCryptos: React.FC<ListSumCryptosProps> = ({ addressId }) => {
-  const [list, setList] = useState<TransactionSum[]>([])
-
-  useEffect(() => {
-    api
-      .get(`/transactions/listsum?addressId=${addressId}`)
-      .then(response => setList(response.data))
-      .catch(error => console.error("Error fetching portfolio:", error))
-  }, [addressId])
-
+const Transactions: React.FC<TransactionsProps> = ({ list }) => {
   return (
     <div className="bg-white rounded-md w-full m-1 p-2">
       {!list || list.length === 0 ? (
@@ -84,9 +72,8 @@ const ListSumCryptos: React.FC<ListSumCryptosProps> = ({ addressId }) => {
           </div>
         ))
       )}
-      <Totals />
     </div>
   )
 }
 
-export default ListSumCryptos
+export default Transactions

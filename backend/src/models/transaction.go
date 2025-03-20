@@ -10,7 +10,7 @@ type Transaction struct {
 	Address        Address `pg:"rel:has-one" json:"address"`
 	PriceId        int     `json:"priceId"`
 	Price          Price   `pg:"rel:has-one" json:"price"`
-	TimeStamp      string  `json:"timeStamp"`
+	TimeStamp      int64   `json:"timeStamp"`
 	Value          int64   `json:"value"`
 	PurchasedPrice float64 `json:"purchasedPrice"`
 
